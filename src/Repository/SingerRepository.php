@@ -16,6 +16,17 @@ class SingerRepository extends ServiceEntityRepository
         parent::__construct($registry, Singer::class);
     }
 
+    public function findAllWithPagination($page, $limit)
+    {
+        $qb = $this->createQueryBuilder('si')
+            // définit les limites pour la pagination
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+
+        $query = $qb->getQuery();
+        return $query->getResult();
+    }
+
     //    /**
     //     * @return Singer[] Returns an array of Singer objects
     //     */

@@ -16,6 +16,19 @@ class DiscRepository extends ServiceEntityRepository
         parent::__construct($registry, Disc::class);
     }
 
+    public function findAllWithPagination($page, $limit)
+    {
+        $qb = $this->createQueryBuilder('d')
+            // permet la pagination définit ses limites
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+
+        $query = $qb->getQuery();
+        //->Methode pour empêcher le lazy loading si la requête ci-dessus est insuffisante.
+        // $query->setFetchMode(Disc::class, 'songs', \Doctrine\ORM\Mapping\ClassMetadata::FETCH_EAGER);
+        return $query->getResult();
+    }
+
     //    /**
     //     * @return Disc[] Returns an array of Disc objects
     //     */

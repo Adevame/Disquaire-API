@@ -25,6 +25,7 @@ class AppFixtures extends Fixture
             $gender = $this->faker->randomElement(['male', 'female']);
             $singer->setFullName($this->faker->name($gender));
             $manager->persist($singer);
+            $listSinger[] = $singer;
         }
 
         for ($i = 0; $i < 10; $i++) {
@@ -32,6 +33,7 @@ class AppFixtures extends Fixture
             $randWords = rand(1, 6);
             $disc->setDiscName($this->faker->sentence($randWords));
             $manager->persist($disc);
+            $listDisc[] = $disc;
         }
 
         for ($i = 0; $i < 25; $i++) {
@@ -49,6 +51,8 @@ class AppFixtures extends Fixture
                 $duration = $duration . 's';
             }
             $song->setDuration($duration);
+            $song->setSinger($listSinger[array_rand($listSinger)]);
+            $song->setDisc($listDisc[array_rand($listDisc)]);
             $manager->persist($song);
         }
 

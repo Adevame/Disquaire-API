@@ -15,16 +15,28 @@ class Song
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['getSong', 'getSingers', 'getDiscs'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['getSong', 'getSingers', 'getDiscs'])]
     private ?string $title = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['getSong'])]
     private ?string $duration = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['getSong'])]
     private ?string $genre = null;
+
+    #[ORM\ManyToOne(inversedBy: 'songs')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Singer $singer = null;
+
+    #[ORM\ManyToOne(inversedBy: 'songs')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Disc $disc = null;
 
     public function getId(): ?int
     {
@@ -63,6 +75,30 @@ class Song
     public function setGenre(string $genre): static
     {
         $this->genre = $genre;
+
+        return $this;
+    }
+
+    public function getSinger(): ?Singer
+    {
+        return $this->singer;
+    }
+
+    public function setSinger(?Singer $singer): static
+    {
+        $this->singer = $singer;
+
+        return $this;
+    }
+
+    public function getDisc(): ?Disc
+    {
+        return $this->disc;
+    }
+
+    public function setDisc(?Disc $disc): static
+    {
+        $this->disc = $disc;
 
         return $this;
     }
