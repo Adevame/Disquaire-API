@@ -7,6 +7,37 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
+
+/**
+ * @Hateoas\Relation(
+ * "self",
+ * href = @Hateoas\Route(
+ * "detailSinger",
+ * parameters = { "id" = "expr(object.getId())" }
+ * ),
+ * exclusion = @Hateoas\Exclusion(groups="getSingers")
+ * )
+ *
+ * @Hateoas\Relation(
+ * "delete",
+ * href = @Hateoas\Route(
+ * "deleteSinger",
+ * parameters = { "id" = "expr(object.getId())" },
+ * ),
+ * exclusion = @Hateoas\Exclusion(groups="getSingers", excludeIf= "expr(not is_granted('ROLE_ADMIN'))"),
+ * )
+ *
+ * @Hateoas\Relation(
+ * "update",
+ * href = @Hateoas\Route(
+ * "updateSinger",
+ * parameters = { "id" = "expr(object.getId())" },
+ * ),
+ * exclusion = @Hateoas\Exclusion(groups="getSingers", excludeIf= "expr(not is_granted('ROLE_ADMIN'))"),
+ * )
+ *
+ */
 
 #[ORM\Entity(repositoryClass: DiscRepository::class)]
 class Disc
@@ -14,11 +45,12 @@ class Disc
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    #[Groups(['getSong', 'getDiscs'])]
+    #[Groups(['getSong', 'getDiscs', 'getSingers'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Groups(['getSong', 'getDiscs'])]
+    #[Groups(['getSong', 'getDiscs', 'getSingers'])]
+    #[Assert\NotBlank(message: "Le nom du disque est obligatoire")]
     private ?string $discName = null;
 
     /**

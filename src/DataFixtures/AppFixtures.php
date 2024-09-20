@@ -7,18 +7,36 @@ use Doctrine\Persistence\ObjectManager;
 use App\Entity\Singer;
 use App\Entity\Disc;
 use App\Entity\Song;
+use App\Entity\User;
 use Faker\Factory;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
+    private $userPasswordHasher;
     private $faker;
 
-    public function __construct()
+    public function __construct(UserPasswordHasherInterface $userPasswordHasher)
     {
-        $this->faker = Factory::create('fr_FR', 'us_US');
+        $this->faker = Factory::create('fr_FR');
+        $this->userPasswordHasher = $userPasswordHasher;
     }
+
     public function load(ObjectManager $manager): void
     {
+        $user = new User();
+        $user->setEmail('user@songapi.com');
+        $user->setRoles(["ROLE_USER"]);
+
+        $user->setPassword($this->userPasswordHasher->hashPassword($user, 'password'));
+        $manager->persist($user);
+
+        $userAdmin = new User();
+        $userAdmin->setEmail('admin@songapi.com');
+        $userAdmin->setRoles(["ROLE_ADMIN"]);
+
+        $userAdmin->setPassword($this->userPasswordHasher->hashPassword($userAdmin, 'password'));
+        $manager->persist($userAdmin);
 
         for ($i = 0; $i < 10; $i++) {
             $singer = new Singer;
@@ -51,6 +69,7 @@ class AppFixtures extends Fixture
                 $duration = $duration . 's';
             }
             $song->setDuration($duration);
+            $song->setPublishedYear($this->faker->dateTimeBetween("-54 years", "now")->format('Y'));
             $song->setSinger($listSinger[array_rand($listSinger)]);
             $song->setDisc($listDisc[array_rand($listDisc)]);
             $manager->persist($song);

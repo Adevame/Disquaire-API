@@ -19,11 +19,11 @@ class SongRepository extends ServiceEntityRepository
     public function findAllWithPagination($page, $limit)
     {
         $qb = $this->createQueryBuilder('s')
-            // permet de sélectionner les données rechcherchée ainsi que permettre la pagination
-            ->select('s.title', 's.duration', 's.genre', 'singer.fullName AS singerName', 'singer.id AS singerId', 'disc.discName AS discName', 'disc.id AS discId')
             // jointure avec les entités Singer et Disc pour afficher les informations des artistes et des disques associés
             ->leftJoin('s.singer', 'singer')
             ->leftJoin('s.disc', 'disc')
+            // permet de sélectionner les données rechcherchée ainsi que permettre la pagination
+            ->addSelect('singer', 'disc')
             // définit les limites pour la pagination
             ->setFirstResult(($page - 1) * $limit)
             ->setMaxResults($limit);

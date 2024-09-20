@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SingerRepository::class)]
 class Singer
@@ -19,6 +20,7 @@ class Singer
 
     #[ORM\Column(length: 255)]
     #[Groups(['getSong', 'getSingers'])]
+    #[Assert\NotBlank(message: "Le nom du disque est obligatoire")]
     private ?string $fullName = null;
 
     /**
